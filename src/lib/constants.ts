@@ -1,4 +1,4 @@
-import type { Action, Domain, Role } from "./types";
+import type { Action, Condition, Domain, Role } from "./types";
 
 export const DOMAINS: { key: Domain; label: string; description: string }[] = [
   { key: "forca", label: "Força", description: "Poder físico" },
@@ -56,3 +56,32 @@ export const ACTION_MAX = 4;
 export const ACTION_TOTAL = 15;
 export const INITIAL_PI = 5;
 export const INITIAL_PT = 0;
+
+export const CONDITION_EFFECTS: Record<Condition, { label: string; effect: string }> = {
+  sangrando: { label: "Sangrando", effect: "Perde 1 de Vida por rodada" },
+  atordoado: { label: "Atordoado", effect: "Perde 1 ação simples" },
+  machucado: { label: "Machucado", effect: "Falha automaticamente em testes de Mobilidade" },
+  apavorado: { label: "Apavorado", effect: "Falha automaticamente em testes de Mente" },
+  camuflado: { label: "Camuflado", effect: "Recebe +5 em testes de Esconder" },
+  pesado: { label: "Pesado", effect: "-5 em Mobilidade e apenas 1 ação simples" },
+  adrenalina: { label: "Adrenalina", effect: "+2 em qualquer teste durante a batalha" },
+  tenso: { label: "Tenso", effect: "-3 em qualquer teste durante a batalha" },
+};
+
+export const DAMAGE_FORMULAS: Record<string, string> = {
+  desarmado: "1d4",
+  faca: "1d6",
+  revolver: "1d8+2",
+  improvisada_leve: "1d4+2",
+  improvisada_pesada: "2d4",
+};
+
+export const PT_THRESHOLDS = [
+  { value: 5, label: "Desconforto", description: "Paranoia e desconforto" },
+  { value: 10, label: "Alucinações", description: "Começa a ter alucinações" },
+];
+
+export const COMBAT_BATTLE_ACTIONS = 1;
+export const COMBAT_SIMPLE_ACTIONS = 2;
+export const FATAL_ATTACK_BONUS_PI = 2;
+export const CRITICAL_HIT_THRESHOLD_MIN = 9;
