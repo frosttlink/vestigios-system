@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { BookOpen, Plus } from "lucide-react";
+import { BookOpen, Plus, Users, Swords } from "lucide-react";
 import Link from "next/link";
 
 export default async function CampanhaPage() {
@@ -9,8 +9,22 @@ export default async function CampanhaPage() {
   const { data: campaigns } = await supabase
     .from("campanhas")
     .select("*")
-    .eq("mestre_id", user!.id)
+    .eq("master_id", user!.id)
     .order("created_at", { ascending: false });
+
+  const { data: memberCampaigns } = await supabase
+    .from("campanha_membros")
+    .select("campanha_id, campanhas!inner(*)")
+    .eq("user_id", user!.id);
+
+  const memberCampaignData = (memberCampaigns
+    ?.filter((m) => m.campanhas)
+    .map((m) => m.campanhas) ?? []) as Campaign[];
+
+  const allCampaigns = [...(campaigns ?? []), ...memberCampaignData];
+  const uniqueCampaigns = allCampaigns.filter(
+    (camp, i, arr) => arr.findIndex((c) => c.id === camp.id) === i,
+  );
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -27,7 +41,7 @@ export default async function CampanhaPage() {
         </Link>
       </div>
 
-      {(!campaigns || campaigns.length === 0) ? (
+      {uniqueCampaigns.length === 0 ? (
         <div className="border border-zinc-800 rounded-xl p-12 text-center bg-zinc-950/50">
           <BookOpen size={32} className="mx-auto mb-4 text-zinc-700" />
           <p className="text-sm text-zinc-500 font-mono mb-2">
@@ -44,24 +58,58 @@ export default async function CampanhaPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {campaigns.map((camp) => (
-            <Link
-              key={camp.id}
-              href={`/dashboard/campanha/${camp.id}`}
-              className="border border-zinc-800 rounded-xl p-5 bg-zinc-950/50 hover:border-zinc-600 transition-all duration-300"
-            >
-              <h2 className="text-sm uppercase tracking-[0.2em] text-zinc-100 mb-2">
-                {camp.name}
+        <div className="space-y-6">
+          {campaigns && campaigns.length > 0 && (
+            <div>
+              <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-3 flex items-center gap-2">
+                <Swords size={12} /> Mestrando
               </h2>
-              <p className="text-xs text-zinc-500 font-mono mb-3 line-clamp-2">
-                {camp.description}
-              </p>
-              <p className="text-[10px] text-zinc-700 font-mono">
-                {camp.characters?.length ?? 0} personagens
-              </p>
-            </Link>
-          ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {campaigns.map((camp) => (
+                  <Link
+                    key={camp.id}
+                    href={`/dashboard/campanha/${camp.id}`}
+                    className="border border-zinc-800 rounded-xl p-5 bg-zinc-950/50 hover:border-zinc-600 transition-all duration-300"
+                  >
+                    <h2 className="text-sm uppercase tracking-[0.2em] text-zinc-100 mb-2">
+                      {camp.name}
+                    </h2>
+                    <p className="text-xs text-zinc-500 font-mono mb-3 line-clamp-2">
+                      {camp.description}
+                    </p>
+                    <p className="text-[10px] text-zinc-700 font-mono">
+                      {camp.characters?.length ?? 0} personagens
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {memberCampaignData.length > 0 && (
+            <div>
+              <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-500 mb-3 flex items-center gap-2">
+                <Users size={12} /> Participando
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {memberCampaignData.map((camp) => (
+                  <Link
+                    key={camp.id}
+                    href={`/dashboard/campanha/${camp.id}`}
+                    className="border border-zinc-800 rounded-xl p-5 bg-zinc-950/50 hover:border-zinc-600 transition-all duration-300"
+                  >
+                    <h2 className="text-sm uppercase tracking-[0.2em] text-zinc-100 mb-2">
+                      {camp.name}
+                    </h2>
+                    <p className="text-xs text-zinc-500 font-mono mb-3 line-clamp-2">
+                      {camp.description}
+                    </p>
+                    <span className="text-[10px] text-zinc-600 font-mono">Como jogador</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
