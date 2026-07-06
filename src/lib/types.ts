@@ -91,6 +91,7 @@ export interface Character {
   conditions: Condition[];
   traumas: string[];
   powers: SupernaturalPower[];
+  session_count?: number;
   created_at: string;
   updated_at: string;
 }
@@ -104,6 +105,41 @@ export interface Campaign {
   created_at: string;
 }
 
+export interface CampaignMember {
+  id: string;
+  campanha_id: string;
+  user_id: string;
+  character_id: string | null;
+  created_at: string;
+}
+
+export interface CampaignMemberWithCharacter extends CampaignMember {
+  character_name?: string;
+  character_vida_atual?: number;
+  character_vida_max?: number;
+  character_mente_atual?: number;
+  character_mente_max?: number;
+  character_pt?: number;
+  character_conditions?: Condition[];
+  character_role?: Role | null;
+  character_forca?: number;
+  character_velocidade?: number;
+  character_resistencia?: number;
+  character_sabedoria?: number;
+  character_carisma?: number;
+  user_email?: string;
+}
+
+export interface CampaignInvite {
+  id: string;
+  campanha_id: string;
+  token: string;
+  created_by: string;
+  description: string;
+  usado: boolean;
+  created_at: string;
+}
+
 export interface Enemy {
   id: string;
   campaign_id: string;
@@ -111,10 +147,41 @@ export interface Enemy {
   vida: number;
   defesa: number;
   pa: number;
+  pa_max: number;
   tamanho: string;
   caracteristicas: string;
   ponto_fraco: string;
   ataques: EnemyAttack[];
+}
+
+export interface EnemyAttack {
+  name: string;
+  type: "simples" | "normal" | "fatal";
+  damage: string;
+  pa_cost: number;
+  description: string;
+}
+
+export interface CombatParticipant {
+  id: string;
+  name: string;
+  type: "character" | "enemy";
+  vida_atual: number;
+  vida_max: number;
+  conditions: Condition[];
+  isPlayer?: boolean;
+  characterId?: string;
+  enemyId?: string;
+  initiative?: number;
+  attackMod?: number;
+  defenseMod?: number;
+}
+
+export interface CombatState {
+  participants: CombatParticipant[];
+  currentTurnIndex: number;
+  round: number;
+  isActive: boolean;
 }
 
 export interface EnemyAttack {
