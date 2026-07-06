@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import type { Campaign } from "@/lib/types";
 import { BookOpen, Plus, Users, Swords } from "lucide-react";
 import Link from "next/link";
 
@@ -19,7 +20,7 @@ export default async function CampanhaPage() {
 
   const memberCampaignData = (memberCampaigns
     ?.filter((m) => m.campanhas)
-    .map((m) => m.campanhas) ?? []) as Campaign[];
+    .map((m) => m.campanhas) ?? []) as unknown as Campaign[];
 
   const allCampaigns = [...(campaigns ?? []), ...memberCampaignData];
   const uniqueCampaigns = allCampaigns.filter(

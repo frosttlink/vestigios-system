@@ -36,7 +36,7 @@ export function AcceptInviteForm({ campaignId, inviteId, characters }: Props) {
       });
 
     if (memberError) {
-      setError(memberError.message);
+      setError(String(memberError?.message ?? "Erro ao aceitar convite"));
       setLoading(false);
       return;
     }
