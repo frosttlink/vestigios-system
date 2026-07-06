@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { DOMAINS, ACTIONS, ROLES, DOMAIN_MAX, DOMAIN_TOTAL, ACTION_MAX, ACTION_TOTAL, INITIAL_PI } from "@/lib/constants";
 import type { Action, Domain, Role } from "@/lib/types";
@@ -11,9 +11,25 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const STEPS = ["Identidade", "Domínios", "Ações", "Função", "Revisão"];
 
 export default function NovaFichaPage() {
+  return (
+    <Suspense fallback={
+      <div className="p-8 max-w-3xl mx-auto text-center">
+        <p className="text-xs text-zinc-500 font-mono">Carregando...</p>
+      </div>
+    }>
+      <NovaFichaForm />
+    </Suspense>
+  );
+}
+
+function NovaFichaForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [loadingData, setLoadingData] = useState(!!editId);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -41,6 +57,39 @@ export default function NovaFichaPage() {
   const vidaMax = calculateLife(domains.forca, domains.velocidade, domains.resistencia);
   const menteMax = calculateMind(domains.sabedoria, domains.resistencia, domains.carisma);
 
+  useEffect(() => {
+    if (!editId) return;
+    (async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("personagens")
+        .select("*")
+        .eq("id", editId)
+        .single();
+      if (error || !data) {
+        setLoadError("Erro ao carregar ficha: " + (error?.message ?? "não encontrada"));
+        setLoadingData(false);
+        return;
+      }
+      setForm({
+        name: data.name ?? "",
+        description: data.description ?? "",
+        backstory: data.backstory ?? "",
+        fears: data.fears ?? "",
+      });
+      setDomains({
+        forca: data.forca ?? 0,
+        velocidade: data.velocidade ?? 0,
+        resistencia: data.resistencia ?? 0,
+        sabedoria: data.sabedoria ?? 0,
+        carisma: data.carisma ?? 0,
+      });
+      if (data.actions) setActions(data.actions as Record<Action, number>);
+      if (data.role) setRole(data.role as Role);
+      setLoadingData(false);
+    })();
+  }, [editId]);
+
   function updateDomain(key: Domain, value: number) {
     setDomains((prev) => ({ ...prev, [key]: Math.max(0, Math.min(DOMAIN_MAX, value)) }));
   }
@@ -55,8 +104,7 @@ export default function NovaFichaPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { error } = await supabase.from("personagens").insert({
-      user_id: user.id,
+    const payload = {
       name: form.name,
       description: form.description,
       backstory: form.backstory,
@@ -64,18 +112,28 @@ export default function NovaFichaPage() {
       ...domains,
       actions,
       role,
-      pi: INITIAL_PI,
-      pt: 0,
       vida_max: vidaMax,
       mente_max: menteMax,
-      vida_atual: vidaMax,
-      mente_atual: menteMax,
-      inventory: [],
-      equipment: [],
-      conditions: [],
-      traumas: [],
-      powers: [],
-    });
+    };
+
+    let error;
+    if (editId) {
+      ({ error } = await supabase.from("personagens").update(payload).eq("id", editId));
+    } else {
+      ({ error } = await supabase.from("personagens").insert({
+        ...payload,
+        user_id: user.id,
+        pi: INITIAL_PI,
+        pt: 0,
+        vida_atual: vidaMax,
+        mente_atual: menteMax,
+        inventory: [],
+        equipment: [],
+        conditions: [],
+        traumas: [],
+        powers: [],
+      }));
+    }
 
     setSaving(false);
 
@@ -88,11 +146,34 @@ export default function NovaFichaPage() {
     router.refresh();
   }
 
+  if (loadError) {
+    return (
+      <div className="p-8 max-w-3xl mx-auto text-center">
+        <p className="text-sm text-red-400 font-mono">{loadError}</p>
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard")}
+          className="mt-4 text-xs uppercase tracking-[0.2em] text-zinc-500 hover:text-zinc-300 transition-colors"
+        >
+          Voltar ao Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  if (loadingData) {
+    return (
+      <div className="p-8 max-w-3xl mx-auto text-center">
+        <p className="text-xs text-zinc-500 font-mono">Carregando ficha...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 max-w-3xl mx-auto">
       <div className="mb-8">
         <h1 className="text-lg uppercase tracking-[0.3em] text-zinc-100 mb-6">
-          Nova Ficha
+          {editId ? "Editar Ficha" : "Nova Ficha"}
         </h1>
 
         <div className="flex gap-2 mb-8">
@@ -349,7 +430,7 @@ export default function NovaFichaPage() {
             disabled={saving || !form.name}
             className="w-full border border-zinc-700 rounded-lg px-6 py-4 text-sm uppercase tracking-[0.2em] text-zinc-300 hover:border-zinc-400 hover:text-white hover:shadow-[0_0_30px_rgba(255,255,255,0.08)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {saving ? "Salvando..." : "Criar Personagem"}
+            {saving ? "Salvando..." : editId ? "Salvar Alterações" : "Criar Personagem"}
           </button>
         </div>
       )}

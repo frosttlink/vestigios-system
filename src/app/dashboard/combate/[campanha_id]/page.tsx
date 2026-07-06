@@ -36,7 +36,7 @@ export default async function CombatePage({
     <CombatManager
       campaignId={campanha_id}
       campaignName={campaign.name}
-      characters={(characters ?? []).map((c: any) => ({
+      characters={(characters ?? []).map((c) => ({
         id: c.id,
         name: c.name,
         vida_atual: c.vida_atual,
