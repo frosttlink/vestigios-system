@@ -9,7 +9,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center p-4 noise-overlay scanline-overlay">
-        <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-8 w-full max-w-md backdrop-blur-sm animate-fade-slide-up text-center">
+        <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-6 sm:p-8 w-full max-w-md backdrop-blur-sm animate-fade-slide-up text-center">
           <p className="text-xs text-zinc-500 font-mono">Carregando...</p>
         </div>
       </div>
@@ -89,7 +89,7 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 noise-overlay scanline-overlay">
-      <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-8 w-full max-w-md backdrop-blur-sm animate-fade-slide-up">
+      <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-6 sm:p-8 w-full max-w-md backdrop-blur-sm animate-fade-slide-up">
         <div className="mb-8 text-center">
           <h1 className="text-xl uppercase tracking-[0.3em] text-zinc-100 mb-2">
             Vestígios

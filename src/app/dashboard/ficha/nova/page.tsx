@@ -274,18 +274,18 @@ function NovaFichaForm() {
                     type="button"
                     onClick={() => updateDomain(d.key, domains[d.key] - 1)}
                     disabled={domains[d.key] === 0}
-                    className="w-8 h-8 rounded border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="min-w-[44px] min-h-[44px] rounded border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
                   >
                     -
                   </button>
-                  <span className="text-lg font-mono text-zinc-100 w-6 text-center">
+                  <span className="text-lg font-mono text-zinc-100 w-8 text-center">
                     {domains[d.key]}
                   </span>
                   <button
                     type="button"
                     onClick={() => updateDomain(d.key, domains[d.key] + 1)}
                     disabled={domains[d.key] >= DOMAIN_MAX || domainTotal >= DOMAIN_TOTAL}
-                    className="w-8 h-8 rounded border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="min-w-[44px] min-h-[44px] rounded border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
                   >
                     +
                   </button>
@@ -307,7 +307,7 @@ function NovaFichaForm() {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {ACTIONS.map((a) => (
               <div key={a.key} className="border border-zinc-800 rounded-lg p-3 flex items-center justify-between">
                 <span className="text-xs uppercase tracking-[0.1em] text-zinc-300">
@@ -318,7 +318,7 @@ function NovaFichaForm() {
                     type="button"
                     onClick={() => updateAction(a.key, actions[a.key] - 1)}
                     disabled={actions[a.key] === 0}
-                    className="w-6 h-6 rounded border border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed text-xs"
+                    className="w-8 h-8 rounded border border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed text-xs flex items-center justify-center"
                   >
                     -
                   </button>
@@ -329,7 +329,7 @@ function NovaFichaForm() {
                     type="button"
                     onClick={() => updateAction(a.key, actions[a.key] + 1)}
                     disabled={actions[a.key] >= ACTION_MAX || actionTotal >= ACTION_TOTAL}
-                    className="w-6 h-6 rounded border border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed text-xs"
+                    className="w-8 h-8 rounded border border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed text-xs flex items-center justify-center"
                   >
                     +
                   </button>

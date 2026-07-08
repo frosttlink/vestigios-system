@@ -29,13 +29,13 @@ export default async function CampanhaPage() {
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <h1 className="text-lg uppercase tracking-[0.3em] text-zinc-100">
           Campanhas
         </h1>
         <Link
           href="/dashboard/campanha/nova"
-          className="flex items-center gap-2 border border-zinc-700 rounded-lg px-4 py-2.5 text-xs uppercase tracking-[0.2em] text-zinc-300 hover:border-zinc-400 hover:text-white transition-all duration-300"
+          className="flex items-center gap-2 border border-zinc-700 rounded-lg px-4 py-3 text-xs uppercase tracking-[0.2em] text-zinc-300 hover:border-zinc-400 hover:text-white transition-all duration-300 self-stretch sm:self-auto justify-center"
         >
           <Plus size={14} />
           Nova Campanha

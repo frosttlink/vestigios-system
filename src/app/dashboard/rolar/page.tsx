@@ -38,7 +38,7 @@ export default function RolarDadosPage() {
         <label className="block text-xs uppercase tracking-[0.2em] text-zinc-400 mb-3">
           Fórmula
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <input
             value={diceInput}
             onChange={(e) => setDiceInput(e.target.value)}
@@ -48,7 +48,7 @@ export default function RolarDadosPage() {
           <button
             type="button"
             onClick={handleRoll}
-            className="flex items-center gap-2 border border-zinc-700 rounded-lg px-6 py-3 text-xs uppercase tracking-[0.2em] text-zinc-300 hover:border-zinc-400 hover:text-white transition-all duration-300"
+            className="flex items-center justify-center gap-2 border border-zinc-700 rounded-lg px-6 py-3 text-xs uppercase tracking-[0.2em] text-zinc-300 hover:border-zinc-400 hover:text-white transition-all duration-300"
           >
             <Dice1 size={14} />
             Rolar

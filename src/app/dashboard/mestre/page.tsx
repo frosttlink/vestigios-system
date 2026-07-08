@@ -86,7 +86,7 @@ export default function MestrePage() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-4 gap-3 text-xs font-mono">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
                   <div>
                     <span className="text-zinc-600 block text-[10px]">Vida</span>
                     <input
@@ -97,7 +97,7 @@ export default function MestrePage() {
                         updated[i] = { ...enemy, vida: Number(e.target.value) };
                         setEnemies(updated);
                       }}
-                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1 text-zinc-100"
+                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1.5 text-zinc-100"
                     />
                   </div>
                   <div>
@@ -110,7 +110,7 @@ export default function MestrePage() {
                         updated[i] = { ...enemy, defesa: Number(e.target.value) };
                         setEnemies(updated);
                       }}
-                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1 text-zinc-100"
+                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1.5 text-zinc-100"
                     />
                   </div>
                   <div>
@@ -123,7 +123,7 @@ export default function MestrePage() {
                         updated[i] = { ...enemy, pa: Number(e.target.value) };
                         setEnemies(updated);
                       }}
-                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1 text-zinc-100"
+                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1.5 text-zinc-100"
                     />
                   </div>
                   <div>
@@ -135,7 +135,7 @@ export default function MestrePage() {
                         updated[i] = { ...enemy, tamanho: e.target.value };
                         setEnemies(updated);
                       }}
-                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1 text-zinc-100"
+                      className="w-full bg-black border border-zinc-800 rounded px-2 py-1.5 text-zinc-100"
                     />
                   </div>
                 </div>

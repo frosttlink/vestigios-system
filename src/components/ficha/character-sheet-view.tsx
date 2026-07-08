@@ -3,7 +3,7 @@
 import type { Character, Domain, Action, Condition } from "@/lib/types";
 import { DOMAINS, ACTIONS, ROLES, INITIAL_PI } from "@/lib/constants";
 import { rollD10, rollDamage, testLabel } from "@/lib/dice";
-import { useState, useCallback } from "react";
+import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { InventorySection } from "./inventory-section";
 import { ConditionsSection } from "./conditions-section";
@@ -15,6 +15,7 @@ import { EvolutionPanel } from "./evolution-panel";
 import {
   Dice1, Heart, Brain, Swords, ArrowLeft, Plus, Minus,
   Coins, Zap, User, BookOpen, AlertTriangle, Trash2,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -119,7 +120,7 @@ export function CharacterSheetView({ character }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column — Identity + Domains + PT */}
         <div className="space-y-6">
-          {/* Identity */}
+          {/* Identity — always visible */}
           <div className="border border-zinc-800 rounded-xl p-6 bg-zinc-950/50">
             <div className="flex items-center justify-between mb-2">
               <h1 className="text-lg uppercase tracking-[0.3em] text-zinc-100">
@@ -154,10 +155,7 @@ export function CharacterSheetView({ character }: Props) {
           </div>
 
           {/* Domains */}
-          <div className="border border-zinc-800 rounded-xl p-6 bg-zinc-950/50">
-            <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-4">
-              Domínios
-            </h2>
+          <CollapsibleSection title="Domínios" defaultOpen={true}>
             <div className="space-y-3">
               {DOMAINS.map((d) => {
                 const val = character[d.key];
@@ -172,10 +170,10 @@ export function CharacterSheetView({ character }: Props) {
                         <button
                           type="button"
                           onClick={() => handleRoll(val)}
-                          className="text-zinc-600 hover:text-zinc-300 transition-colors"
+                          className="text-zinc-600 hover:text-zinc-300 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                           title="Rolar teste"
                         >
-                          <Dice1 size={14} />
+                          <Dice1 size={16} />
                         </button>
                       </div>
                     </div>
@@ -189,26 +187,25 @@ export function CharacterSheetView({ character }: Props) {
                 );
               })}
             </div>
-          </div>
+          </CollapsibleSection>
 
           {/* PT Tracker */}
-          <PTTracker
-            characterId={character.id}
-            pt={pt}
-            menteMax={character.mente_max}
-            resistencia={character.resistencia}
-            sabedoria={character.sabedoria}
-            onUpdate={handlePtChange}
-          />
+          <CollapsibleSection title="Pontos de Tensão (PT)" defaultOpen={false}>
+            <PTTracker
+              characterId={character.id}
+              pt={pt}
+              menteMax={character.mente_max}
+              resistencia={character.resistencia}
+              sabedoria={character.sabedoria}
+              onUpdate={handlePtChange}
+            />
+          </CollapsibleSection>
         </div>
 
         {/* Middle column — Actions + Conditions + Powers + Synch */}
         <div className="space-y-6">
           {/* Actions */}
-          <div className="border border-zinc-800 rounded-xl p-6 bg-zinc-950/50">
-            <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-4">
-              Ações
-            </h2>
+          <CollapsibleSection title="Ações" defaultOpen={true}>
             <div className="space-y-1">
               {ACTIONS.map((a) => {
                 const val = character.actions[a.key] ?? 0;
@@ -223,59 +220,63 @@ export function CharacterSheetView({ character }: Props) {
                         type="button"
                         onClick={() => handleRoll(val)}
                         disabled={val === 0}
-                        className="text-zinc-700 hover:text-zinc-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="text-zinc-700 hover:text-zinc-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed min-w-[44px] min-h-[44px] flex items-center justify-center"
                         title="Rolar teste"
                       >
-                        <Dice1 size={12} />
+                        <Dice1 size={14} />
                       </button>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          </CollapsibleSection>
 
           {/* Conditions */}
-          <ConditionsSection
-            characterId={character.id}
-            initialConditions={conditions}
-            onUpdate={setConditions}
-          />
+          <CollapsibleSection title="Condições" defaultOpen={false}>
+            <ConditionsSection
+              characterId={character.id}
+              initialConditions={conditions}
+              onUpdate={setConditions}
+            />
+          </CollapsibleSection>
 
           {/* Powers */}
-          <PowersSection
-            characterId={character.id}
-            initialPowers={character.powers}
-            onUpdate={() => router.refresh()}
-          />
+          <CollapsibleSection title="Poderes" defaultOpen={false}>
+            <PowersSection
+              characterId={character.id}
+              initialPowers={character.powers}
+              onUpdate={() => router.refresh()}
+            />
+          </CollapsibleSection>
 
           {/* Synchronicity Test */}
-          <SynchronicityTest characterPi={pi} onPiLoss={(loss) => handlePiChange(-loss)} />
+          <CollapsibleSection title="Teste de Sincronicidade" defaultOpen={false}>
+            <SynchronicityTest characterPi={pi} onPiLoss={(loss) => handlePiChange(-loss)} />
+          </CollapsibleSection>
 
           {/* Evolution */}
-          <EvolutionPanel
-            characterId={character.id}
-            domains={{
-              forca: character.forca,
-              velocidade: character.velocidade,
-              resistencia: character.resistencia,
-              sabedoria: character.sabedoria,
-              carisma: character.carisma,
-            }}
-            actions={character.actions}
-            sessionCount={sessionCount}
-            onUpdate={() => router.refresh()}
-          />
+          <CollapsibleSection title="Evolução" defaultOpen={false}>
+            <EvolutionPanel
+              characterId={character.id}
+              domains={{
+                forca: character.forca,
+                velocidade: character.velocidade,
+                resistencia: character.resistencia,
+                sabedoria: character.sabedoria,
+                carisma: character.carisma,
+              }}
+              actions={character.actions}
+              sessionCount={sessionCount}
+              onUpdate={() => router.refresh()}
+            />
+          </CollapsibleSection>
         </div>
 
         {/* Right column — Stats + Role Ability + Backstory + Traumas */}
         <div className="space-y-6">
           {/* Stats */}
-          <div className="border border-zinc-800 rounded-xl p-6 bg-zinc-950/50">
-            <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-4">
-              Atributos
-            </h2>
-
+          <CollapsibleSection title="Atributos" defaultOpen={true}>
             <div className="space-y-4">
               {/* Vida */}
               <div>
@@ -288,9 +289,9 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handleVidaChange(-1)}
-                      className="text-zinc-700 hover:text-zinc-400 transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-700 hover:text-zinc-400 transition-colors"
                     >
-                      <Minus size={12} />
+                      <Minus size={14} />
                     </button>
                     <span className="text-sm font-mono text-green-400 min-w-[60px] text-right">
                       {vida}/{character.vida_max}
@@ -298,9 +299,9 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handleVidaChange(1)}
-                      className="text-zinc-700 hover:text-zinc-400 transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-700 hover:text-zinc-400 transition-colors"
                     >
-                      <Plus size={12} />
+                      <Plus size={14} />
                     </button>
                   </div>
                 </div>
@@ -323,9 +324,9 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handleMenteChange(-1)}
-                      className="text-zinc-700 hover:text-zinc-400 transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-700 hover:text-zinc-400 transition-colors"
                     >
-                      <Minus size={12} />
+                      <Minus size={14} />
                     </button>
                     <span className="text-sm font-mono text-blue-400 min-w-[60px] text-right">
                       {mente}/{character.mente_max}
@@ -333,9 +334,9 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handleMenteChange(1)}
-                      className="text-zinc-700 hover:text-zinc-400 transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-700 hover:text-zinc-400 transition-colors"
                     >
-                      <Plus size={12} />
+                      <Plus size={14} />
                     </button>
                   </div>
                 </div>
@@ -356,17 +357,17 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handlePiChange(-1)}
-                      className="text-zinc-700 hover:text-zinc-400 transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-700 hover:text-zinc-400 transition-colors"
                     >
-                      <Minus size={10} />
+                      <Minus size={12} />
                     </button>
                     <span className="text-sm font-mono text-yellow-400 min-w-[20px] text-center">{pi}</span>
                     <button
                       type="button"
                       onClick={() => handlePiChange(1)}
-                      className="text-zinc-700 hover:text-zinc-400 transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-700 hover:text-zinc-400 transition-colors"
                     >
-                      <Plus size={10} />
+                      <Plus size={12} />
                     </button>
                   </div>
                 </div>
@@ -377,7 +378,7 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handlePiChange(2)}
-                      className="border border-zinc-800 rounded px-2 py-0.5 text-[9px] font-mono text-zinc-500 hover:border-zinc-600 hover:text-zinc-300 transition-all"
+                      className="border border-zinc-800 rounded px-2 py-1 text-[9px] font-mono text-zinc-500 hover:border-zinc-600 hover:text-zinc-300 transition-all"
                       title="Descoberta leve (+2 PI)"
                     >
                       Leve +2
@@ -385,7 +386,7 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handlePiChange(3 + Math.floor(Math.random() * 3))}
-                      className="border border-zinc-800 rounded px-2 py-0.5 text-[9px] font-mono text-zinc-500 hover:border-zinc-600 hover:text-zinc-300 transition-all"
+                      className="border border-zinc-800 rounded px-2 py-1 text-[9px] font-mono text-zinc-500 hover:border-zinc-600 hover:text-zinc-300 transition-all"
                       title="Descoberta média (+2 a +5 PI)"
                     >
                       Média 2-5
@@ -393,7 +394,7 @@ export function CharacterSheetView({ character }: Props) {
                     <button
                       type="button"
                       onClick={() => handlePiChange(5 + Math.floor(Math.random() * 5))}
-                      className="border border-zinc-800 rounded px-2 py-0.5 text-[9px] font-mono text-zinc-500 hover:border-zinc-600 hover:text-zinc-300 transition-all"
+                      className="border border-zinc-800 rounded px-2 py-1 text-[9px] font-mono text-zinc-500 hover:border-zinc-600 hover:text-zinc-300 transition-all"
                       title="Descoberta grande (+5 a +9 PI)"
                     >
                       Grande 5-9
@@ -404,7 +405,7 @@ export function CharacterSheetView({ character }: Props) {
                         const total = rollDamage("2d8");
                         handlePiChange(total);
                       }}
-                      className="border border-purple-900/50 rounded px-2 py-0.5 text-[9px] font-mono text-purple-400 hover:border-purple-600 transition-all"
+                      className="border border-purple-900/50 rounded px-2 py-1 text-[9px] font-mono text-purple-400 hover:border-purple-600 transition-all"
                       title="Vestígio (2d8 PI)"
                     >
                       Vestígio 2d8
@@ -432,25 +433,24 @@ export function CharacterSheetView({ character }: Props) {
                 </div>
               )}
             </div>
-          </div>
+          </CollapsibleSection>
 
           {/* Role Ability */}
-          <RoleAbility
-            characterId={character.id}
-            role={character.role}
-            pi={pi}
-            pt={pt}
-            onUpdate={(newPi, newPt) => {
-              setPi(newPi);
-              setPt(newPt);
-            }}
-          />
+          <CollapsibleSection title="Habilidade de Função" defaultOpen={false}>
+            <RoleAbility
+              characterId={character.id}
+              role={character.role}
+              pi={pi}
+              pt={pt}
+              onUpdate={(newPi, newPt) => {
+                setPi(newPi);
+                setPt(newPt);
+              }}
+            />
+          </CollapsibleSection>
 
           {/* Quick Roll by DC */}
-          <div className="border border-zinc-800 rounded-xl p-6 bg-zinc-950/50">
-            <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-3">
-              Rolagem Rápida
-            </h2>
+          <CollapsibleSection title="Rolagem Rápida" defaultOpen={false}>
             <div className="grid grid-cols-2 gap-2">
               {([6, 8, 10, 12] as const).map((dc) => (
                 <button
@@ -471,33 +471,29 @@ export function CharacterSheetView({ character }: Props) {
                 </button>
               ))}
             </div>
-          </div>
+          </CollapsibleSection>
 
           {/* Inventory */}
-          <InventorySection
-            characterId={character.id}
-            initialInventory={character.inventory}
-            initialEquipment={character.equipment}
-            onUpdate={() => router.refresh()}
-          />
+          <CollapsibleSection title="Inventário" defaultOpen={false}>
+            <InventorySection
+              characterId={character.id}
+              initialInventory={character.inventory}
+              initialEquipment={character.equipment}
+              onUpdate={() => router.refresh()}
+            />
+          </CollapsibleSection>
 
           {/* Backstory */}
           {character.backstory && (
-            <div className="border border-zinc-800 rounded-xl p-6 bg-zinc-950/50">
-              <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-2 flex items-center gap-2">
-                <BookOpen size={12} /> História
-              </h2>
+            <CollapsibleSection title="História" defaultOpen={false}>
               <p className="text-[11px] text-zinc-500 font-mono leading-relaxed whitespace-pre-wrap">
                 {character.backstory}
               </p>
-            </div>
+            </CollapsibleSection>
           )}
 
           {/* Traumas */}
-          <div className="border border-zinc-800 rounded-xl p-6 bg-zinc-950/50">
-            <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-2 flex items-center gap-2">
-              <AlertTriangle size={12} className="text-red-400" /> Traumas
-            </h2>
+          <CollapsibleSection title="Traumas" defaultOpen={false}>
             {character.traumas && character.traumas.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {character.traumas.map((t, i) => (
@@ -508,7 +504,7 @@ export function CharacterSheetView({ character }: Props) {
               </div>
             )}
             <AddTraumaForm characterId={character.id} onAdd={() => router.refresh()} />
-          </div>
+          </CollapsibleSection>
 
           {/* Session control */}
           <div className="border border-zinc-800 rounded-xl p-4 bg-zinc-950/50">
@@ -537,6 +533,40 @@ export function CharacterSheetView({ character }: Props) {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  children,
+  defaultOpen,
+}: {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen ?? false);
+
+  return (
+    <div className="border border-zinc-800 rounded-xl bg-zinc-950/50">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="lg:hidden w-full flex items-center justify-between p-4 text-xs uppercase tracking-[0.2em] text-zinc-400 hover:text-zinc-200 transition-colors"
+      >
+        {title}
+        <ChevronDown
+          size={14}
+          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <h2 className="hidden lg:block text-xs uppercase tracking-[0.2em] text-zinc-400 p-6 pb-0">
+        {title}
+      </h2>
+      <div className={`p-6 pt-0 lg:pt-6 lg:block ${open ? "block" : "hidden"}`}>
+        {children}
       </div>
     </div>
   );

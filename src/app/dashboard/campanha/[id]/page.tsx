@@ -64,12 +64,12 @@ export default async function CampanhaDetalhePage({
           </p>
         </div>
         {isMaster && (
-          <div className="flex flex-col gap-3 items-end">
-            <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end w-full sm:w-auto">
+            <div className="flex gap-3 w-full sm:w-auto">
               <InviteSection campaignId={id} />
               <Link
                 href={`/dashboard/combate/${id}`}
-                className="flex items-center gap-2 border border-zinc-700 rounded-lg px-4 py-2.5 text-xs uppercase tracking-[0.2em] text-zinc-300 hover:border-zinc-400 hover:text-white transition-all duration-300"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-2 border border-zinc-700 rounded-lg px-4 py-3 text-xs uppercase tracking-[0.2em] text-zinc-300 hover:border-zinc-400 hover:text-white transition-all duration-300"
               >
                 <Swords size={14} />
                 Combate
@@ -94,7 +94,7 @@ export default async function CampanhaDetalhePage({
               Nenhum jogador nesta campanha ainda. Compartilhe o link de convite!
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {members.map((member) => {
                 const char = member.character_id ? charMap.get(member.character_id) : null;
                 return (
@@ -105,13 +105,13 @@ export default async function CampanhaDetalhePage({
                     <span className="text-sm text-zinc-200 font-mono block">
                       {char?.name ?? "Personagem não vinculado"}
                     </span>
-                    {char && (
-                      <div className="mt-2 space-y-1 text-[10px] font-mono">
-                        <div className="flex gap-3">
-                          <span className="text-green-400">Vida: {char.vida_atual}/{char.vida_max}</span>
-                          <span className="text-blue-400">Mente: {char.mente_atual}/{char.mente_max}</span>
-                          <span className="text-red-400">PT: {char.pt}</span>
-                        </div>
+                      {char && (
+                        <div className="mt-2 space-y-1 text-[10px] font-mono">
+                          <div className="flex flex-wrap gap-x-3 gap-y-1">
+                            <span className="text-green-400">Vida: {char.vida_atual}/{char.vida_max}</span>
+                            <span className="text-blue-400">Mente: {char.mente_atual}/{char.mente_max}</span>
+                            <span className="text-red-400">PT: {char.pt}</span>
+                          </div>
                         {char.role && (
                           <span className="text-zinc-500">Função: {char.role}</span>
                         )}
@@ -154,7 +154,7 @@ export default async function CampanhaDetalhePage({
             Nenhum jogador adicionado ainda.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {members.map((member) => {
               const char = member.character_id ? charMap.get(member.character_id) : null;
               return (
