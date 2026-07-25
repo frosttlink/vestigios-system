@@ -89,60 +89,6 @@ vestigios-system/
 └── package.json
 ```
 
-## Getting Started
-
-### Pré-requisitos
-
-- [Node.js](https://nodejs.org/) 18+
-- [pnpm](https://pnpm.io/) (recomendado) ou npm
-- Conta no [Supabase](https://supabase.com)
-
-### Instalação
-
-```bash
-# Clone o repositório
-git clone https://github.com/frosttlink/vestigios-system.git
-cd vestigios-system
-
-# Instale as dependências
-pnpm install
-
-# Configure as variáveis de ambiente
-cp .env.local.example .env.local
-# Edite .env.local com suas credenciais do Supabase
-
-# Execute o servidor de desenvolvimento
-pnpm dev
-```
-
-Acesse [http://localhost:3000](http://localhost:3000).
-
-## Configuração do Supabase
-
-### 1. Criar Projeto
-
-1. Acesse [supabase.com](https://supabase.com) e crie um novo projeto
-2. Vá em **Project Settings → API** e copie as credenciais
-
-### 2. Variáveis de Ambiente
-
-Edite `.env.local`:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-anon-key-aqui
-```
-
-### 3. Rodar Migrations
-
-No SQL Editor do Supabase, execute o conteúdo de `supabase/migrations/001_schema.sql`.
-
-### 4. Configurar Auth
-
-Em **Authentication → Settings**:
-- Desabilite "Confirm email" para cadastro imediato (opcional)
-- Confirme que "Email Auth" está habilitado
-
 ## Rotas
 
 | Rota | Descrição | Autenticada |
@@ -157,22 +103,6 @@ Em **Authentication → Settings**:
 | `/dashboard/campanha/[id]` | Detalhes da campanha | Sim |
 | `/dashboard/mestre` | Escudo do mestre | Sim |
 | `/dashboard/rolar` | Rolagem de dados | Sim |
-
-## Variáveis de Ambiente
-
-| Variável | Descrição | Obrigatória |
-|----------|-----------|-------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL do projeto Supabase | Sim |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Chave pública (anon) do Supabase | Sim |
-
-## Desenvolvimento
-
-```bash
-pnpm dev        # Servidor de desenvolvimento
-pnpm build      # Build de produção
-pnpm start      # Iniciar servidor de produção
-pnpm lint       # Verificar código (ESLint)
-```
 
 ## Licença
 
